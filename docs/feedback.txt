@@ -1,0 +1,58 @@
+---------------------------------31.05.2021-------------------------------------
+1. Label need to set staric
+2. label need to be pascal tormat
+3. Cash receipt: Chalan only be enable if bank receipt 1101
+4. Amount decimal should be two digit i.e 120.23
+5. CCY allow to input more than authorize amount (Imam vi allowed).
+6. Chalan date: not more than posting date
+7. search button. on click search open modal if search input empty, ealse search on code.
+8. Save button insted of submit in chart of account
+9. amount field in right alignment
+10. balance 20 digit
+11. skip disable/readonly on press tab
+12. "Are you sure", "Transaction Authorize" button "OK", "Cancel". Remove comment on authorize pop.
+13. Show header in transaction authorize details
+14. Add comment as placeholder on rejection
+
+---------------------------------01.06.2021-------------------------------------
+# Chart of account
+1. No need label in "Account name or code"
+2. add gaph of tree
+3. add edit option on tree
+4. remove "Add" on edit page
+
+#Revenue Account Setup
+1. need a search as like payment/receipt
+
+================================================================================
+---------------------------------02.06.2021-------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

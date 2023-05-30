@@ -1,0 +1,343 @@
+/***Loading.. start
+*use #loading_page_loader in your js to show and hide
+**/
+
+.loading-page-overlay {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: fixed;
+    background: rgb(255, 255, 255);
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    /*display: none;*/
+}
+
+.loading-page-overlay .center-loader {
+    left: 50%;
+    right: 50%;
+    top: 50%;
+    bottom: 50%;
+    position: absolute;
+    color: white;
+}
+/*Loading.. end*/
+
+
+.displayNone{
+    display:none;
+}
+.required:after {
+    content:" *";
+    color: red;
+}
+
+.grid-divider {
+    border-right: 1px solid gray;
+}
+
+
+.alert-static {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.alert-static-primary {
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+
+.alert-static-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-static-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-static-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+div.has-error {
+    color: red;
+}
+
+.text-editor {
+    z-index: 999;
+    background-color: white;
+}
+
+/*.ql-container {
+    height: auto;
+}*/
+
+textarea.customize-text-editor {
+    z-index: -999;
+    border: none;
+    position: absolute;
+    bottom: 0;
+    left:0;
+}
+
+.border-6 {
+    margin: 0 -15px 0 -15px;
+    /*border: solid #5A8DEE;*/
+    border: solid #475F7B!important;
+}
+
+.form-control.disabled, .text-area-design.disabled {
+    background-color: #FEFEFE;
+    color: black!important;
+}
+
+.text-area-design {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.btn-custom-spacing {
+    padding: 0 5px 0 0;
+}
+
+.disabled-opacity {
+    opacity: 1.5 !important;
+}
+
+/*** invoice payment and invoice ***/
+.make-readonly {
+    pointer-events: none;
+    touch-action: none;
+}
+
+.make-readonly-bg {
+    pointer-events: none;
+    touch-action: none;
+    background-color: #F2F4F4;
+    opacity: 1;
+}
+
+.make-select2-readonly-bg .select2-selection{
+    pointer-events: none;
+    touch-action: none;
+    background-color: #F2F4F4;
+    opacity: 1;
+}
+
+/**** Table fixed only header scrollable body- start css  ****/
+.fixed-height-scrollable {
+    max-height: 250px;
+    display: block;
+    overflow: auto;
+}
+
+.fixed-height-scrollable-4kp {
+    max-height: 400px;
+    display: block;
+    overflow: auto;
+}
+
+.sticky-head th{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.sticky-head-budget th{
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+/**** Table fixed only header scrollable body- end css  ****/
+
+/**** Table fixed header and footer and scrollable body- start css  ****/
+.table-scroll {
+    position: relative;
+    width:100%;
+    z-index: 1;
+    margin: auto;
+    overflow: auto;
+    /*height: 250px;*/
+    max-height: 450px;
+
+}
+
+.table-scroll table {
+    width: 100%;
+    /*min-width: 1280px;*/
+    margin: auto;
+}
+
+.table-scroll th,
+.table-scroll td {
+    padding: 5px 10px;
+}
+
+.table-scroll thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+/* safari and ios need the tfoot itself to be position:sticky also */
+.table-scroll tfoot,
+.table-scroll tfoot th,
+.table-scroll tfoot td {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index:4;
+}
+
+.table-scroll th:first-child {
+    z-index: 2;
+}
+/**** Table fixed header and footer and scrollable body- end css  ****/
+
+.table thead, label {
+    text-transform: capitalize !important;
+}
+.text-right-align {
+    text-align: right;
+}
+
+/*.no-js #loader { display: none;  }
+.js #loader { display: block; position: absolute; left: 100px; top: 0; }*/
+/*.se-pre-con {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url("../images/pages/preloader.gif") center no-repeat #fff;
+}*/
+
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #455A64;
+    padding-left: 0px;
+    margin-top: 30px
+}
+
+#progressbar li {
+    list-style-type: disclosure-closed;
+    /*width: 16.66%;*/
+    width: 18.66%;
+    float: left;
+    position: relative;
+    font-weight: 400
+}
+
+#progressbar #step1:before {
+    content: "1";
+}
+#progressbar #step2:before {
+    content: "2";
+}
+#progressbar #step3:before {
+    content: "3";
+}
+#progressbar #step4:before {
+    content: "4";
+}
+#progressbar #step5:before {
+    content: "5";
+}
+#progressbar #step6:before {
+    content: "6";
+}
+#progressbar #step7:before {
+    content: "7";
+}
+#progressbar #step8:before {
+    content: "8";
+}
+#progressbar #step9:before {
+    content: "9";
+}
+#progressbar #step10:before {
+    content: "10";
+}
+
+#progressbar li:before {
+    width: 40px;
+    height: 40px;
+    line-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: #455A64;
+    border-radius: 50%;
+    margin: auto;
+    color: #fff;
+    z-index: 11;
+    position: relative;
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: #455A64;
+    position: absolute;
+    left: 0;
+    top: 21px;
+    z-index: 0;
+}
+
+#progressbar li:last-child:after {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    position: absolute;
+    left: -50%
+}
+
+#progressbar li:first-child:after {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: absolute;
+    left: 50%
+}
+
+#progressbar li:last-child:after {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px
+}
+
+#progressbar li:first-child:after {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #fc960f;
+}
+#progressbar li.done.active:before, #progressbar li.done.active:after{
+    background: #00aa00;
+}
+#progressbar li.reject.active:before, #progressbar li.reject.active:after{
+    background: #bf0000;
+}
+#progressbar  li.reject:before, #progressbar  li.reject:after{
+    background: #bf0000;
+}
+#progressbar  li.done:before, #progressbar  li.done:after{
+    background: #00aa00;
+}

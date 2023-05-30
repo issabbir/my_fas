@@ -1,0 +1,388 @@
+<?php
+/**
+ *Created by PhpStorm
+ *Created at ২৩/১১/২১ ১১:১০ AM
+ */
+?>
+@extends("layouts.default")
+
+@section('title')
+@endsection
+
+@section('header-style')
+    <style type="text/css" rel="stylesheet">
+        .select2-container--classic .select2-selection--single, .select2-container--default .select2-selection--single {
+            min-height: calc(1.1em + .94rem + 3.7px);
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="card">
+        <div class="card-body">
+            <h4><span class="border-bottom-secondary border-bottom-2">Budget Concurrence Transaction Information:</span>
+            </h4>
+
+            @include('budget-monitoring.concurrence-transaction.form')
+        </div>
+    </div>
+    @include("budget-monitoring.common_budged_search")
+    @include('budget-monitoring.common_vendor_list_modal')
+
+@endsection
+
+@section('footer-script')
+    <script type="text/javascript">
+        function getDepartmentIntPeriod() {
+            $("#department").html("");
+            $("#transaction_period").html("");
+
+
+            let calendarId = $("#fiscal_year :selected").val();
+            if (!nullEmptyUndefinedChecked(calendarId)) {
+                let request = $.ajax({
+                    url: APP_URL + "/budget-monitoring/ajax/dept-period-on-calender",
+                    data: {
+                        calendarId: calendarId,
+                        pre_selected_dpt: $("#department").data('predpt'),
+                        pre_selected_period: $("#transaction_period").data('preperiod')
+                    }
+                });
+
+                request.done(function (e) {
+                    $("#department").html(e.department);
+                    $("#transaction_period").html(e.period);
+                })
+
+                request.fail(function (jqXHR, textStatus) {
+                    swal.fire({
+                        text: jqXHR.responseJSON['message'],
+                        type: 'warning',
+                    })
+                })
+            }
+            $("#transaction_date").trigger("click");
+        }
+
+        /*$("#fiscal_year").on('change', function () {
+            getDepartmentIntPeriod();
+        });*/
+        getDepartmentIntPeriod();
+
+        let intCalendarClickCounter = 0;
+        $("#transaction_period, #fiscal_year").on('change', function () {
+            $("#transaction_date >input").val("");
+            if (intCalendarClickCounter > 0) {
+                $("#transaction_date").datetimepicker('destroy');
+                intCalendarClickCounter = 0;
+            }
+        });
+        $("#transaction_period").on('focusin', function () {
+            checkFinancialYearSet();
+        });
+        $("#transaction_date").on('click', function () {
+            if (checkPeriodSet()) {
+                intCalendarClickCounter++;
+                $("#transaction_date >input").val("");
+                let minDate = $("#transaction_period :selected").data("mindate");
+                let maxDate = $("#transaction_period :selected").data("maxdate");
+                let currentDate = $("#transaction_period :selected").data("currentdate");
+                datePickerOnPeriod(this, minDate, maxDate, currentDate);
+            }
+        });
+
+        function checkPeriodSet() {
+            if (nullEmptyUndefinedChecked($("#transaction_period").val())) {
+                $("#transaction_period").notify("Select Transaction Period.", {position: "right", className: 'info'});
+                return false;
+            }
+            return true;
+        }
+
+        function checkFinancialYearSet() {
+            if (nullEmptyUndefinedChecked($("#fiscal_year").val())) {
+                $("#fiscal_year").notify("Select Financial Year.", {position: "right", className: 'info'});
+                return false;
+            }
+            return true;
+        }
+
+        $("#department").on('change', function () {
+            resetField(['#budget_head_id', '#budget_head_name',
+                '#budget_sub_category', '#budget_category', '#budget_type',
+                '#ministry_approved', '#utilized_amount', '#balance_amount']);
+        });
+        datePicker("#memo_date");
+        datePicker("#est_date");
+        datePicker("#contract_date");
+        datePicker("#tender_proposal_date");
+
+
+        /*
+        * Budget search starts from here
+        * */
+        $(" #search_budget").on("click", function () {
+            let budgetId = $('#budget_head_id').val();
+            let department = $('#department :selected').val();
+            let calendar = $('#fiscal_year :selected').val();
+
+            resetBudgetField();
+            reloadBudgetListTable();
+
+            if (!nullEmptyUndefinedChecked($("#department :selected").val())) {
+                if (!nullEmptyUndefinedChecked(budgetId)) {
+                    getBudgetDetailInfo(budgetId, department, calendar);
+                } else {
+                    reloadBudgetListTable();
+
+                    $("#s_fiscal_year").val($("#fiscal_year").text().trim()); // Add trim Pavel:28-03-22
+                    $("#s_department").val($("#department :selected").text());
+                    $("#budgetListModal").modal('show');
+                }
+            } else {
+                $("#department").notify("Select Department First.");
+                resetField(['#budget_head_id']);
+            }
+
+        });
+        $(document).on('submit', '#booking_search_form', function (e) {
+            e.preventDefault();
+            reloadBudgetListTable();
+        })
+
+        $(document).on('click', '.budgetSelect', function () {
+            getBudgetDetailInfo($(this).data('budget'), $(this).data('department'), $(this).data('calendar'));
+        });
+
+        function getBudgetDetailInfo(budgetId, department, calendar) {
+            var request = $.ajax({
+                url: APP_URL + '/budget-monitoring/ajax/a-budget-detail',
+                data: {budget_id: budgetId, department: department, calendar: calendar}
+            });
+
+            request.done(function (d) {
+                if ($.isEmptyObject(d.data)) {
+                    $("#budget_head_id").notify("Budget Head Not Found", "error");
+                    resetField(['#budget_head_name',
+                        '#budget_sub_category', '#budget_category', '#budget_type',
+                        '#ministry_approved', '#utilized_amount', '#balance_amount']);
+                } else {
+                    $('#budget_head_id').val(d.data.budget_head_id);
+                    $('#budget_head_name').val(d.data.budget_head_name);
+                    $('#budget_sub_category').val(d.data.sub_category_name);
+                    $('#budget_category').val(d.data.category_name);
+                    $('#budget_type').val(d.data.budget_type_name);
+                    $('#ministry_approved').val(d.data.ministry_approved_amt);
+                    $('#utilized_amount').val(d.data.budget_utilized_amt);
+                    $('#balance_amount').val(d.data.budget_balance_amt);
+                }
+                $("#budgetListModal").modal('hide');
+            });
+
+            request.fail(function (jqXHR, textStatus) {
+                console.log(jqXHR);
+            });
+        }
+
+        function reloadBudgetListTable() {
+            budgetTable.draw();
+        }
+
+        let budgetTable = $('#budget_head_list').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ordering: false,
+            ajax: {
+                url: APP_URL + '/budget-monitoring/ajax/budget-head-datalist',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: function (params) {
+                    params.department = $('#department :selected').val();
+                    params.calendar = $('#fiscal_year :selected').val();
+                }
+            },
+            "columns": [
+                {"data": 'budget_head_id', "name": 'budget_head_id'},
+                {"data": "budget_head_name"},
+                {"data": "sub_category"},
+                {"data": "category_name"},
+                {"data": "budget_type"},
+                {"data": "balance"},
+                {"data": "action", "orderable": false}
+            ],
+        });
+
+        function resetBudgetField() {
+            resetField(['#budget_head_name',
+                '#budget_sub_category', '#budget_category', '#budget_type',
+                '#ministry_approved', '#utilized_amount', '#balance_amount']);
+        }
+
+        /*
+        * Budget search ends here
+        * */
+
+        $('#bill_section').change(function (e) {
+            $("#bill_register").val("");
+            let billSectionId = $(this).val();
+            selectBillRegister('#bill_register', APP_URL + '/budget-monitoring/ajax/bill-section-by-register/' + billSectionId, '', '');
+        });
+
+
+        /*
+       * Vendor search starts from here
+       * */
+        $(" #vendor_search").on("click", function () {
+            let vendorId = $('#vendor_id').val();
+
+            if (!nullEmptyUndefinedChecked(vendorId)) {
+                getVendorDetail(vendorId);
+            } else {
+                //let invoiceParams = $("#ap_invoice_type").find(':selected').data("invoiceparams");
+                reloadVendorListTable();
+                $("#vendorListModal").modal('show');
+            }
+        });
+
+        function reloadVendorListTable() {
+            $('#vendorSearch').data("dt_params", {
+                vendorType: $('#search_vendor_type :selected').val(),
+                vendorCategory: $('#search_vendor_category :selected').val(),
+                vendorName: $('#search_vendor_name').val(),
+                vendorShortName: $('#search_vendor_short_name').val(),
+            }).DataTable().draw();
+        }
+
+        $("#vendor_search_form").on('submit', function (e) {
+            e.preventDefault();
+            reloadVendorListTable();
+            //accountTable.draw();
+        });
+
+        /*$("#ap_reset_vendor_balance_field").on("click", function () {
+            resetField(['#ap_search_vendor_id', '#ap_search_vendor_name', '#ap_search_vendor_category', '#ap_bills_payable', '#ap_prepayments', '#ap_security_deposits', '#ap_advance', '#ap_imprest_cash', '#ap_revolving_cash']);
+        });*/
+        $(document).on('click', '.vendorSelect', function () {
+            getVendorDetail($(this).data('vendor'));
+        });
+
+        function getVendorDetail(vendor_id) {
+
+            var request = $.ajax({
+                url: APP_URL + '/budget-monitoring/ajax/vendor-details',
+                data: {vendorId: vendor_id}
+            });
+
+            request.done(function (d) {
+                if ($.isEmptyObject(d)) {
+                    $("#vendor_id").notify("Party/Vendor id not found", "error");
+                    resetField(['#vendor_id', '#vendor_name']);
+                } else {
+                    $('#vendor_id').val(d.vendor_id);
+                    $('#vendor_name').val(d.vendor_name);
+                }
+                $("#vendorListModal").modal('hide');
+            });
+
+            request.fail(function (jqXHR, textStatus) {
+                console.log(jqXHR);
+            });
+        }
+
+        let vendorTable = $('#vendorSearch').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ordering: false,
+            ajax: {
+                url: APP_URL + '/budget-monitoring/ajax/vendor-search-datalist',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: function (params) {
+                    // Retrieve dynamic parameters
+                    var dt_params = $('#vendorSearch').data('dt_params');
+                    // Add dynamic parameters to the data object sent to the server
+                    if (dt_params) {
+                        $.extend(params, dt_params);
+                    }
+                }
+            },
+            "columns": [
+                {"data": 'vendor_id', "name": 'vendor_id'},
+                {"data": "name"},
+                {"data": "short_name"},
+                {"data": "category"},
+                {"data": "action", "orderable": false}
+            ],
+        });
+        /*
+        * Vendor search ends here
+        * */
+
+
+
+        /*$(document).on("click", "#budgetFormSubmit", function () {
+            $("#concurrence_form").submit();
+        })*/
+        $("#concurrence_form").on("submit", function (e) {
+            e.preventDefault();
+
+            swal.fire({
+                text: 'Save Budget Booking Confirm?',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.value == true) {
+                    let request = $.ajax({
+                        url: APP_URL + "/budget-monitoring/concurrence-transaction",
+                        data: new FormData(this),
+                        processData: false,
+                        contentType: false,
+                        dataType: "JSON",
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": '{{ csrf_token()}}'
+                        }
+                    });
+
+                    request.done(function (res) {
+                        if (res.response_code != "99") {
+                            Swal.fire({
+                                type: 'success',
+                                text: res.response_msg,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                allowOutsideClick: false
+                            }).then(function () {
+                                //location.reload();
+                                window.location.href = "{{route('concurrence-transaction.index')}}";
+                                //window.history.back();
+                            });
+                        } else {
+                            Swal.fire({text: res.response_msg, type: 'error'});
+                        }
+                    });
+
+                    request.fail(function (jqXHR, textStatus) {
+                        console.log(textStatus);
+                        /*swal.fire({
+                            text: jqXHR.responseJSON,
+                            type: 'warning',
+                        })*/
+                    });
+                }
+            })
+        });
+    </script>
+@endsection
+
+

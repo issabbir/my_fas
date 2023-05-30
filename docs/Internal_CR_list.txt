@@ -1,0 +1,8 @@
+26/05/2022
+------------
+**CM:
+    -Add posting period
+    -Add posting date
+    -Modify clearing date condition
+    Clearing_date <= trans_date (allowed)
+    clearing_date >= instrument_date (not allowed)
